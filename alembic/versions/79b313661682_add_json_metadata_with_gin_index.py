@@ -15,7 +15,13 @@ branch_labels = None
 depends_on = None
 
 def upgrade():
-    pass
+    op.execute("""
+        CREATE INDEX ix_projects_metadata_json_gin
+        ON projects
+        USING GIN (metadata_json jsonb_path_ops);
+    """)
 
 def downgrade():
-    pass
+    op.execute("""
+        DROP INDEX ix_projects_metadata_json_gin;
+    """)

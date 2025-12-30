@@ -7,8 +7,8 @@ class Company(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
     country = Column(String, nullable=False)
-    projects = relationship("Project", back_populates="company", cascade="all delete")
-    workers = relationship("Worker", back_populates="company", cascade="all delete")
+    projects = relationship("Project", back_populates="company", cascade="all, delete")
+    workers = relationship("Worker", back_populates="company", cascade="all, delete")
 
 class Project(Base):
     __tablename__ = "projects"
@@ -19,7 +19,7 @@ class Project(Base):
     metadata_json = Column(JSON)
     company_id = Column(Integer, ForeignKey("companies.id"))
     company = relationship("Company", back_populates="projects")
-    workers = relationship("Worker", back_populates="project", cascade="all delete")
+    workers = relationship("Worker", back_populates="project", cascade="all, delete")
 
 
 class Worker(Base):
