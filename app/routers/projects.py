@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app import crud, schemas, database
+from app import crud, schemas, database, models
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 get_db = database.get_db
@@ -24,3 +24,9 @@ def increase_budget(limit: int, increase: int, db: Session = Depends(get_db)):
 @router.get("/sorted", response_model=list[schemas.ProjectRead])
 def sorted_projects(desc: bool = False, db: Session = Depends(get_db)):
     return crud.sorted_projects(db, desc)
+
+@router.get("/search-json", response_model=list[schemas.ProjectRead])
+def search_projects(pattern: str, db: Session = Depends(get_db)):
+    return db.query(models.Project)\
+             .filter(models.Project.metadata_json.cast(sa.Text).op("~")(pattern))\
+             .all()
