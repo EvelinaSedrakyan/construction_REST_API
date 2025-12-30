@@ -1,16 +1,30 @@
 from pydantic import BaseModel
-from typing import Optional, Dict
 
 class CompanyCreate(BaseModel):
     name: str
-    info: Dict
+    country: str
+
+class CompanyRead(CompanyCreate):
+    id: int
+    class Config:
+        orm_mode = True   
 
 class ProjectCreate(BaseModel):
-    title: str
+    name: str
     budget: int
     company_id: int
 
+class ProjectRead(ProjectCreate):
+    id: int
+    class Config:
+        orm_mode = True    
+
 class WorkerCreate(BaseModel):
     name: str
-    salary: int
+    role: str
     project_id: int
+
+class WorkerRead(WorkerCreate):
+    id: int
+    class Config:
+        orm_mode = True    
