@@ -23,6 +23,16 @@ def create_worker(db: Session, worker: schemas.WorkerCreate):
     db.refresh(obj)
     return obj
 
+#read and filter
+def get_companies(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Company).offset(skip).limit(limit).all()
+
+def get_projects(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Project).offset(skip).limit(limit).all()
+
+def get_workers(db: Session, skip: int = 0, limit: int = 10):
+    return db.query(models.Worker).offset(skip).limit(limit).all()
+
 def filter_projects(db: Session, min_budget: int, name_part: str):
     return db.query(models.Project)\
         .filter(
@@ -30,6 +40,7 @@ def filter_projects(db: Session, min_budget: int, name_part: str):
             models.Project.name.ilike(f"%{name_part}%")
         ).all()
 
+#join,group by
 def join_companies_projects(db: Session):
     return db.query(models.Company.name, models.Project.name)\
         .join(models.Project).all()
@@ -40,6 +51,7 @@ def group_projects(db: Session):
         func.count(models.Project.id)
     ).join(models.Project).group_by(models.Company.name).all()
 
+#update, sort
 def update_budget(db: Session, limit: int, inc: int):
     projects = db.query(models.Project)\
         .filter(models.Project.budget < limit).all()
