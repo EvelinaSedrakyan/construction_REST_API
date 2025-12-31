@@ -15,7 +15,14 @@ branch_labels = None
 depends_on = None
 
 def upgrade():
-    pass
+    op.create_index(
+        'ix_projects_budget',
+        'projects',
+        ['budget']
+    )
 
 def downgrade():
-    pass
+    op.drop_index(
+        'ix_projects_budget',
+        table_name='projects'
+    )

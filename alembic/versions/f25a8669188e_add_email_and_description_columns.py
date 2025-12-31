@@ -15,7 +15,17 @@ branch_labels = None
 depends_on = None
 
 def upgrade():
-    pass
+    op.add_column(
+        'companies',
+        sa.Column('email', sa.String(), nullable=True)
+    )
+
+    op.add_column(
+        'projects',
+        sa.Column('description', sa.Text(), nullable=True)
+    )
+
 
 def downgrade():
-    pass
+    op.drop_column('projects', 'description')
+    op.drop_column('companies', 'email')

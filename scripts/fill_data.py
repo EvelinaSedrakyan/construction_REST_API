@@ -14,43 +14,50 @@ for i in range(50):
         "name": f"Company_{i}",
         "country": random.choice(["USA", "Germany", "France", "Japan", "Korea"])
     }
-    r = requests.post(f"{BASE_URL}/companies/", json=payload)
+    r = requests.post(f"{BASE_URL}/companies/companies/", json=payload)
     r.raise_for_status()
     company_ids.append(r.json()["id"])
 
 print(f"Created {len(company_ids)} companies")
 
 
-project_ids = []
+projects = []
 
 for i in range(200):
+    company_id = random.choice(company_ids)
     payload = {
         "name": f"Project_{i}",
         "budget": random.randint(10_000, 1_000_000),
-        "company_id": random.choice(company_ids),
+        "company_id": company_id,
         "metadata_json": {
             "type": random.choice(["residential", "industrial", "commercial"]),
             "city": random.choice(["Seoul", "Berlin", "Paris", "New York"]),
             "priority": random.randint(1, 5)
         }
     }
-    r = requests.post(f"{BASE_URL}/projects/", json=payload)
+    r = requests.post(f"{BASE_URL}/projects/projects/", json=payload)
     r.raise_for_status()
-    project_ids.append(r.json()["id"])
+    project = r.json()
+    projects.append({"id": project["id"], "company_id": company_id})
 
-print(f"Created {len(project_ids)} projects")
+print(f"Created {len(projects)} projects")
+
 
 worker_count = 0
 
-for project_id in project_ids:
+for project in projects:
+    project_id = project["id"]
+    company_id = project["company_id"]
     for _ in range(random.randint(3, 8)):
         payload = {
             "name": f"Worker_{random_string()}",
             "role": random.choice(["engineer", "manager", "architect", "technician"]),
-            "project_id": project_id
+            "project_id": project_id,
+            "company_id": company_id
         }
-        r = requests.post(f"{BASE_URL}/workers/", json=payload)
+        r = requests.post(f"{BASE_URL}/workers/workers/", json=payload)
         r.raise_for_status()
         worker_count += 1
 
 print(f"Created {worker_count} workers")
+

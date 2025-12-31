@@ -15,6 +15,13 @@ branch_labels = None
 depends_on = None
 
 def upgrade():
+    op.add_column(
+        'projects',
+        sa.Column('metadata_json', sa.JSON(), nullable=True)
+    )
+
+    op.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
+
     op.execute("""
         CREATE INDEX ix_projects_metadata_json_gin
         ON projects
@@ -22,6 +29,5 @@ def upgrade():
     """)
 
 def downgrade():
-    op.execute("""
-        DROP INDEX ix_projects_metadata_json_gin;
-    """)
+    op.execute("DROP INDEX IF EXISTS ix_projects_metadata_json_gin;")
+    op.drop_column('projects', 'metadata_json')
